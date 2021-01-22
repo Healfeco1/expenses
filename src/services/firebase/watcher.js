@@ -2,25 +2,35 @@ import {auth,db} from './setup';
 
 // Registra eventos de los usuarios
 export function watchUserChanges(callback){
-   return auth.onAuthStateChanged((user) => {
+    const unsub = auth.onAuthStateChanged((user)=>{
         if(user && !user.isAnonymous){
+            const {
+                uid,
+                email,
+                dislpayName,
+            } = user
+
+            console.info('service/watcher.js');
             console.log('logged in');
+            
             callback({
-                id: user.uid,
-                email: user.email,
-                dislpayName: user.displayName,
+                id: uid,
+                email,
+                dislpayName,
             });
         }
         else{
+            console.info('service/watcher.js');
             console.log('NOT logged in');
             callback(null);
         }
-    });
+    })
+   return unsub;
 }
 
 // Watcher expenses collection
 export function watchExpenses(callback){
-   return db
+    const unsub = db
         .collection('expenses')
         // Ver los cambios de expenses, lo regresa como un snapshot (Punto de guardado)
         .onSnapshot((snapshot)=>{
@@ -31,9 +41,13 @@ export function watchExpenses(callback){
                 docs.push({
                     // Agregar todo el data
                     ...data,
+                    amount: +data.amount,
                     id: doc.id,
+                    date: data.date && new Date(data.date)
                 });
             })
             callback(docs);
         });
+
+        return unsub;
 }

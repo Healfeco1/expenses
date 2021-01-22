@@ -1,7 +1,7 @@
 import {db} from './setup';
 
 // Crear una nueva collection de gastos
-export async function createExpensive(data){
+export async function createExpense(data){
     return await db
         .collection('expenses')
         .doc()
@@ -9,15 +9,15 @@ export async function createExpensive(data){
 }
 
 // Borrar una nueva collection de gastos
-export async function deleteExpensive(id){
+export async function deleteExpense(id){
     return await db
         .collection('expenses')
-        .doc()
+        .doc(id)
         .delete()
 }
 
 // Borrar una nueva collection de gastos
-export async function updateExpensive(id,data){
+export async function updateExpense(id,data){
     return await db
         .collection('expenses')
         .doc(id)
